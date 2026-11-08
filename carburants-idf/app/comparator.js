@@ -1,6 +1,12 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
+
+const StationsMap = dynamic(() => import('./stations-map'), {
+  ssr: false,
+  loading: () => <p className="map-placeholder" role="status">Chargement de la carte…</p>,
+});
 
 const fuels = [
   ['gazole', 'Gazole'],
@@ -171,6 +177,16 @@ export default function Comparator({ stations }) {
             </label>
           </div>
           <button className="link-button" type="button" onClick={reset}>Réinitialiser les filtres</button>
+        </section>
+
+        <section className="map-panel" aria-labelledby="map-title">
+          <h2 id="map-title">Carte des stations</h2>
+          <p>Les repères suivent les filtres. Sélectionne une station pour voir son prix au litre.</p>
+          <StationsMap
+            stations={results}
+            fuelLabel={fuelLabel}
+            formatPrice={(station) => euros.format(getPrice(station, fuel))}
+          />
         </section>
 
         <section className="results" aria-labelledby="results-title">
